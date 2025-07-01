@@ -41,7 +41,8 @@ class CartService
     public function getCartCount()
     {
         $cart = $this->getCart();
-        return $cart->items()->count();
+        
+        return $cart?->items()?->count() ?? 0;
     }
     
     public function getCartItems()

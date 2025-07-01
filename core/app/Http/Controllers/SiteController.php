@@ -273,4 +273,31 @@ class SiteController extends Controller
         $seoImage    = @$seoContents->image ? getImage(getFilePath('seo') . '/' . @$seoContents->image, getFileSize('seo')) : null;
         return view('Template::shopping_cart', compact('pageTitle', 'sections', 'seoContents', 'seoImage'));
     }
+
+    public function checkout()
+    {
+        $pageTitle   = "Checkout";
+        $sections    = Page::where('tempname', activeTemplate())->where('slug', 'checkout')->first();
+        $seoContents = @$sections->seo_content;
+        $seoImage    = @$seoContents->image ? getImage(getFilePath('seo') . '/' . @$seoContents->image, getFileSize('seo')) : null;
+        return view('Template::checkout', compact('pageTitle', 'sections', 'seoContents', 'seoImage'));
+    }
+
+    public function thankYou(Request $request)
+    {
+        $pageTitle = "Thank You";
+      
+        return view('Template::thank_you', compact('pageTitle'));
+    }
+
+    public function productsListing()
+    {
+        $pageTitle = "Products Listing";
+        $products  = Product::active()->hasCategory()->paginate(getPaginate(16));
+        $sections  = Page::where('tempname', activeTemplate())->where('slug', 'products-listing')->first();
+        $seoContents = @$sections->seo_content;
+        $seoImage    = @$seoContents->image ? getImage(getFilePath('seo') . '/' . @$seoContents->image, getFileSize('seo')) : null;
+
+        return view('Template::products_listing', compact('pageTitle', 'products', 'sections', 'seoContents', 'seoImage'));
+    }
 }

@@ -98,7 +98,7 @@
                                 <a href="{{ route('home') }}" class="stelina-menu-item-title" title="Home">Home</a>
                             </li>
                              <li class="menu-item">
-                                <a href="{{ route('products') }}" class="stelina-menu-item-title" title="Products">Products</a>
+                                <a href="{{ route('products.listing') }}" class="stelina-menu-item-title" title="Products">Products</a>
                             </li>
                             <li class="menu-item">
                                 <a href="#" class="stelina-menu-item-title" title="Home">About us</a>

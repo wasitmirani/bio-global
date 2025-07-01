@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Order extends Model
 {
+    protected $guarded = [];
     public function product()
     {
         return $this->belongsTo(Product::class);
@@ -31,5 +32,9 @@ class Order extends Model
             }
             return $html;
         });
+    }
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
     }
 }

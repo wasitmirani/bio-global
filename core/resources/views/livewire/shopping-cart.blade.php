@@ -37,7 +37,7 @@
                                             <td class="product-quantity" data-title="Quantity">
                                                 <div class="quantity">
                                                     <div class="control">
-                                                        <a class="btn-number qtyminus quantity-minus" href="#">-</a>
+                                                        <a class="btn-number qtyminus quantity-minus" href="#" wire:click.prevent="decreaseQty({{ $item->id }})">-</a>
                                                         <input type="text" data-step="1" data-min="0" value="{{ $item->quantity }}" title="Qty" class="input-qty qty" size="4">
                                                         <a href="#" class="btn-number qtyplus quantity-plus" wire:click.prevent="increaseQty({{ $item->id }})">+</a>
                                                     </div>
@@ -48,7 +48,7 @@
                                                     <span class="woocommerce-Price-currencySymbol">
                                                    
                                                     </span>
-                                                    {{ showAmount($item->price) }}  
+                                                    {{ showAmount($item->price *  $item->quantity) }}  
                                                 </span>
                                             </td>
                                         </tr>

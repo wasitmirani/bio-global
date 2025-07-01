@@ -40,7 +40,7 @@ Route::controller('SiteController')->group(function () {
     Route::get('/products-listing', 'productsListing')->name('products.listing');
     Route::get('/shopping-cart', 'shoppingCart')->name('shopping.cart');
     Route::get('/checkout', 'checkout')->name('checkout.index');
-   
+    Route::get('/thank-you', 'thankYou')->name('thankyou'); 
 
     Route::get('/blog', 'blog')->name('blog');
     Route::get('blog/{slug}', 'blogDetails')->name('blog.details');
