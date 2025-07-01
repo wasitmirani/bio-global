@@ -17,7 +17,7 @@ class OrderController extends Controller
         if ($userId) {
             $orders = $orders->where('user_id', $userId);
         }
-        $orders = $orders->with('product', 'user')->orderBy('id', 'desc')->paginate(getPaginate());
+        $orders = $orders->with('product', 'user','orderItems')->orderBy('id', 'desc')->paginate(getPaginate());
 
         $emptyMessage = 'Order not found';
         return view('admin.orders', compact('pageTitle', 'orders', 'emptyMessage'));
@@ -32,7 +32,12 @@ class OrderController extends Controller
         $order   = Order::where('status', Status::ORDER_PENDING)->findOrFail($id);
         $product = $order->product;
         $user    = $order->user;
-
+        if(!$user) {
+           $order->status = Status::ORDER_SHIPPED;
+            $order->save();
+              $notify[] = ['success', 'Order status updated successfully'];
+        return back()->withNotify($notify);
+        }
         if ($request->status == Status::ORDER_SHIPPED) {
             $order->status = Status::ORDER_SHIPPED;
             $details       = $product->name . ' product purchase';

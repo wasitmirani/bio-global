@@ -9,6 +9,7 @@
                             <thead>
                             <tr>
                                 <th>@lang('User')</th>
+                                 <th>@lang('Type')</th>
                                 <th>@lang('Email-Mobile')</th>
                                 <th>@lang('Country')</th>
                                 <th>@lang('Joined At')</th>
@@ -27,7 +28,9 @@
                                     </span>
                                 </td>
 
-
+                                 <td>
+                                    {{ $user->user_type }}
+                                </td>
                                 <td>
                                     {{ $user->email }}<br>{{ $user->mobileNumber }}
                                 </td>

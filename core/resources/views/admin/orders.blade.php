@@ -23,16 +23,20 @@
                                     <tr>
 
                                         <td>
+                                            @if(!empty( $order->user))
                                             <span class="fw-bold">{{ $order->user->fullname }}</span>
                                             <br>
                                             <span class="small">
                                                 <a href="{{ route('admin.users.detail', $order->user_id) }}"><span>@</span>{{ $order->user->username }}</a>
                                             </span>
+                                            @else
+                                            <span class="fw-bold text-primary">{{ __('Guest') }}</span>
+                                            @endif
                                         </td>
                                         <td>{{ '#' . $order->trx }}</td>
 
                                         <td>{{ showAmount($order->price) }} </td>
-                                        <td>{{ showAmount($order->total_price) }}</td>
+                                        <td>{{ showAmount($order->price * $order->quantity) }}</td>
                                         <td>{{ $order->quantity }}</td>
                                         <td>
                                             @php echo $order->statusOrderBadge @endphp
@@ -45,6 +49,14 @@
                                                 <button class="btn btn-sm btn-outline--success orderDetailsBtn" data-order='@json($order)'
                                                     data-date="{{ showDateTime($order->created_at) }}" data-status="{{ $order->statusOrderBadge }}"><i
                                                         class="las la-desktop"></i>@lang('Details')</button>
+                                               
+                                                 <button class="btn btn-sm btn-outline--info orderDetailsBtnItems" data-order='@json($order)'
+                                                    data-date="{{ showDateTime($order->created_at) }}" data-status="{{ $order->statusOrderBadge }}">
+                                                     <i class="las la-box"></i>@lang('Items & Shipping')
+                                                        
+                                                        @lang('Details')
+                                                    
+                                                    </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -65,35 +77,31 @@
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="orderStatusModal">
+    <!-- Order Items & Shipping Address Modal -->
+    <div class="modal fade" id="orderItemsModal" >
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">@lang('Update Order Status')</h5>
-                    <button class="close" data-bs-dismiss="modal" type="button" aria-label="Close">
+                    <h5 class="modal-title" id="orderItemsModalLabel">@lang('Order Items & Shipping Address')</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <i class="las la-times"></i>
                     </button>
                 </div>
-                <form method="post">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>@lang('Order Status')</label>
-                            <select class="form-control select2" name="status" data-minimum-results-for-search="-1">
-                                <option value="1">@lang('Shipped')</option>
-                                <option value="2">@lang('Cancel')</option>
-                            </select>
-                        </div>
+                <div class="modal-body">
+                    <h6 class="mb-3">@lang('Items')</h6>
+                    <ul class="list-group mb-4 order-items-list">
+                        <!-- Items will be injected by JS -->
+                    </ul>
+                    <h6 class="mb-3">@lang('Shipping Details')</h6>
+                    <div class="shipping-address">
+                        <!-- Address will be injected by JS -->
                     </div>
-                    <div class="modal-footer">
-                        <button class="btn btn--dark" data-bs-dismiss="modal" type="button">@lang('Cancel')</button>
-                        <button class="btn btn--primary" type="submit">@lang('Submit')</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
+    
+
 
     <div class="modal fade" id="orderDetailsModal">
         <div class="modal-dialog modal-dialog-centered">
@@ -163,7 +171,7 @@
                 var price = curSym + parseFloat(order.price).toFixed(2);
                 var totalPrice = curSym + parseFloat(order.total_price).toFixed(2);
                 var url = (`{{ route('admin.product.edit', ':id') }}`).replace(":id", order.product_id);
-                modal.find('.username').text(order.user.username);
+                modal.find('.username').text(order.user.username ? order.user.username : 'Guest');
                 modal.find('.trx').text(order.trx);
                 modal.find('.product').text(order.product.name);
                 modal.find('.product').attr('href', url);
@@ -173,6 +181,77 @@
                 modal.find('.total-price').text(totalPrice);
                 modal.find('.status').html(status);
                 modal.find('.date').html(date);
+                modal.modal('show');
+            });
+
+              $('.orderDetailsBtnItems').on('click', function(e) {
+                console.log('Right click detected');
+          
+                var order = $(this).data('order');
+                var modal = $('#orderItemsModal');
+                console.log(order);
+              
+           
+                var itemsList = modal.find('.order-items-list');
+                var addressDiv = modal.find('.shipping-address');
+                itemsList.empty();
+                addressDiv.empty();
+
+                // Items
+                if(order.order_items && order.order_items.length > 0){
+                    order.order_items.forEach(function(item){
+                        itemsList.append(
+                            `<li class="list-group-item d-flex justify-content-between align-items-center" style="background: #f8f9fa; border-radius: 6px; margin-bottom: 8px;">
+                                <span>
+                                    <b style="color: #2d3748;">${item.product.name}</b>
+                                    <br>
+                                    <small style="color: #6c757d;">@lang('Qty'): ${item.quantity}</small>
+                                </span>
+                                <span style="font-weight: bold; color: #198754;">{{ gs('cur_sym') }}${parseFloat(item.price).toFixed(2)}</span>
+                            </li>`
+                        );
+                    });
+                } else {
+                    itemsList.append(`<li class="list-group-item text-muted">@lang('No items found')</li>`);
+                }
+
+                // Shipping Address
+                if(order.shipping_details){
+                    let addr = order.shipping_details;
+                    addressDiv.html(
+                        `<div style="background: #f8f9fa; border-radius: 8px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);">
+                            <div style="margin-bottom: 8px;">
+                                <b style="color:#2d3748;">@lang('Name'):</b> <span style="color:#495057;">${addr.first_name ?? ''} ${addr.last_name ?? ''}</span>
+                            </div>
+                            <div style="margin-bottom: 8px;">
+                                <b style="color:#2d3748;">@lang('Email'):</b> <span style="color:#495057;">${addr.email ?? ''}</span>
+                            </div>
+                            ${addr.company ? `<div style="margin-bottom: 8px;"><b style="color:#2d3748;">@lang('Company'):</b> <span style="color:#495057;">${addr.company}</span></div>` : ''}
+                            <div style="margin-bottom: 8px;">
+                                <b style="color:#2d3748;">@lang('Address'):</b> <span style="color:#495057;">${addr.address ?? ''}</span>
+                            </div>
+                            <div style="margin-bottom: 8px;">
+                                <b style="color:#2d3748;">@lang('City'):</b> <span style="color:#495057;">${addr.city ?? ''}</span>
+                            </div>
+                            <div style="margin-bottom: 8px;">
+                                <b style="color:#2d3748;">@lang('State'):</b> <span style="color:#495057;">${addr.state ?? ''}</span>
+                            </div>
+                            <div style="margin-bottom: 8px;">
+                                <b style="color:#2d3748;">@lang('ZIP'):</b> <span style="color:#495057;">${addr.zip ?? ''}</span>
+                            </div>
+                            <div style="margin-bottom: 8px;">
+                                <b style="color:#2d3748;">@lang('Country'):</b> <span style="color:#495057;">${addr.country ?? ''}</span>
+                            </div>
+                            <div style="margin-bottom: 8px;">
+                                <b style="color:#2d3748;">@lang('Phone'):</b> <span style="color:#495057;">${addr.phone ?? ''}</span>
+                            </div>
+                            ${addr.order_notes ? `<div style="margin-bottom: 8px;"><b style="color:#2d3748;">@lang('Order Notes'):</b> <span style="color:#495057;">${addr.order_notes}</span></div>` : ''}
+                        </div>`
+                    );
+                } else {
+                    addressDiv.html(`<span class="text-muted">@lang('No shipping details found')</span>`);
+                }
+
                 modal.modal('show');
             });
         })(jQuery);

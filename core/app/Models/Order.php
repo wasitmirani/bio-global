@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 class Order extends Model
 {
     protected $guarded = [];
+    protected $casts = [
+        'shipping_details' => 'array',
+    ];
     public function product()
     {
         return $this->belongsTo(Product::class);
@@ -35,6 +38,6 @@ class Order extends Model
     }
     public function orderItems()
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->hasMany(OrderItem::class)->with('product');
     }
 }
