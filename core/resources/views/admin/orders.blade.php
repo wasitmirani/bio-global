@@ -24,7 +24,7 @@
 
                                         <td>
                                             @if(!empty( $order->user))
-                                            <span class="fw-bold">{{ $order->user->fullname }}</span>
+                                            <span class="fw-bold">{{ $order->user->fullname  }}</span>
                                             <br>
                                             <span class="small">
                                                 <a href="{{ route('admin.users.detail', $order->user_id) }}"><span>@</span>{{ $order->user->username }}</a>
@@ -74,6 +74,34 @@
                         {{ paginateLinks($orders) }}
                     </div>
                 @endif
+            </div>
+        </div>
+    </div>
+         <div class="modal fade" id="orderStatusModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@lang('Update Order Status')</h5>
+                    <button class="close" data-bs-dismiss="modal" type="button" aria-label="Close">
+                        <i class="las la-times"></i>
+                    </button>
+                </div>
+                <form method="post">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>@lang('Order Status')</label>
+                            <select class="form-control select2" name="status" data-minimum-results-for-search="-1">
+                                <option value="1">@lang('Shipped')</option>
+                                <option value="2">@lang('Cancel')</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn--dark" data-bs-dismiss="modal" type="button">@lang('Cancel')</button>
+                        <button class="btn btn--primary" type="submit">@lang('Submit')</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
