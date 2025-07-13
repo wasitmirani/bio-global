@@ -84,6 +84,7 @@ class RegisterController extends Controller
             'email'     => 'required|string|email|unique:users',
             'password'  => ['required', 'confirmed', $passwordValidation],
             'captcha'   => 'sometimes|required',
+            'registration_type' => 'required|in:affiliate,retail',
             'agree'     => $agree
         ], [
             'firstname.required' => 'The first name field is required',
@@ -109,7 +110,7 @@ class RegisterController extends Controller
         }
 
         event(new Registered($user = $this->create($request->all())));
-
+                
         $this->guard()->login($user);
 
         return $this->registered($request, $user) ?: redirect($this->redirectPath());
@@ -132,6 +133,7 @@ class RegisterController extends Controller
         $user->email     = strtolower($data['email']);
         $user->firstname = $data['firstname'];
         $user->lastname  = $data['lastname'];
+        $user->registration_type      = $data['registration_type'];
         $user->password  = Hash::make($data['password']);
         $user->kv = gs('kv') ? Status::NO : Status::YES;
         $user->ev = gs('ev') ? Status::NO : Status::YES;

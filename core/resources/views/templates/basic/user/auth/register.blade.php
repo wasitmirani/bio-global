@@ -52,19 +52,7 @@
                                         <span id="referral"></span>
                                     </div>
                                 </div>
-                                {{-- <div class="col-md-6">
-                                    <div class="form--group">
-                                        <label class="form--label">@lang('Position')</label>
-                                        <select class="position form--control form-select select2" id="position" name="position" required
-                                            data-minimum-results-for-search="-1">
-                                            <option value="" selected disabled>@lang('Select position')</option>
-                                            @foreach (mlmPositions() as $k => $v)
-                                                <option value="{{ $k }}">@lang($v)</option>
-                                            @endforeach
-                                        </select>
-                                        <span id="position-test"><span class="text--danger"></span></span>
-                                    </div>
-                                </div> --}}
+                             
                             @else
                                 <div class="col-md-6">
                                     <div class="form--group">
@@ -74,24 +62,29 @@
                                     </div>
                                 </div>
 
-                                {{-- <div class="col-md-6">
-                                    <div class="form--group">
-                                        <label class="form--label">@lang('Position')</label>
-                                        <select class="position form--control form-select" id="position" required>
-                                            <option value="" selected hidden>@lang('Select position')</option>
-                                            @foreach (mlmPositions() as $k => $v)
-                                                <option value="{{ $k }}" @if ($position == $k) selected @endif>@lang($v)
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <input name="position" type="hidden" value="{{ $position }}">
-                                        @php echo $joining; @endphp
-                                    </div>
-                                </div> --}}
+                               
                             @endif
                         </div>
 
                         <div class="row">
+                             <div class="col-md-12">
+                                    <div class="form--group">
+                                        <label class="form--label">@lang('User type')</label>
+                                        <select class="position form--control form-select" name="registration_type" id="position" required>
+                                            <option value="" selected hidden>@lang('Select User Type')</option>
+                                       
+                                                <option value="affiliate"  >
+                                                    Affiliate
+                                                </option>
+                                                <option value="retail" >
+                                                    Retail
+                                                </option>
+                                           
+                                        </select>
+                                        
+                                     
+                                    </div>
+                                </div>
                             <div class="col-lg-6">
                                 <div class="form--group">
                                     <label class="form--label">@lang('First Name')</label>

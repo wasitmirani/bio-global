@@ -13,7 +13,13 @@
                                 English (USD)
                             </span>
                         </a>
-                     
+                       
+                     | 
+                       <a href="{{route('user.login')}}" class="active language-toggle" >
+                            <span>
+                               {{ auth()->user() ? auth()->user()->username : 'Login' }}
+                            </span>
+                        </a>
                     </div>
                 </div>
                

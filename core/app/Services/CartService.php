@@ -48,11 +48,17 @@ class CartService
     public function getCartItems()
     {
         $cart = $this->getCart();
-        return $cart->items()->with('product')->get();
+        if (!$cart) {
+            return [];
+        }
+        return $cart->items()->with('product')->get() ?? [];
     }
     public function getCartTotal()
     {
         $cart = $this->getCart();
+        if (!$cart) {
+            return 0;
+        }
         return $cart->items->sum(function($item) {
             return $item->price * $item->quantity;
         });
