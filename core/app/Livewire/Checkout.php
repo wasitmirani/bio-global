@@ -9,9 +9,15 @@ use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+
+use Livewire\WithFileUploads;
+
 
 class Checkout extends Component
 { 
+    use WithFileUploads;
     public $cartItems = [];
     public $total = 0;
     public $first_name='';
@@ -25,6 +31,8 @@ class Checkout extends Component
     public $company='';
     public $address='';
     public $zip='';
+    public $payment_proof;
+
 
     public function render()
     {
@@ -55,8 +63,31 @@ class Checkout extends Component
         $user       = auth()->user();
             if (isset($user) && $user->balance < $totalPrice) {
                 $notify[] = ['error', 'Balance is not sufficient'];
+                         $this->dispatch('cartUpdated',['name' => '','message' => 'Balance is not sufficient']);
+
                 return back()->withNotify($notify);
             }
+
+
+            if ($this->payment_proof) {
+    $file = $this->payment_proof;
+    $fileName = time() . '_' . $file->getClientOriginalName();
+    $destinationPath = public_path('assets/payment_proofs');
+
+    // Create directory if not exists
+    if (!File::exists($destinationPath)) {
+        File::makeDirectory($destinationPath, 0755, true);
+    }
+
+    // Copy the temporary Livewire file manually
+    File::copy($file->getRealPath(), $destinationPath . '/' . $fileName);
+
+    // Save relative path in DB
+    $data['payment_proof_url'] = 'assets/payment_proofs/' . $fileName;
+
+    // Save to DB (adjust to your model)
+   
+}
   $transaction               = new Transaction();
         $transaction->user_id      =  !empty(Auth::user()->id) ? Auth::user()->id : 0;
         $transaction->amount       = $this->total;
@@ -65,7 +96,7 @@ class Checkout extends Component
         $transaction->trx_type     = '-';
         $transaction->details      = 'Order Checkout';
         $transaction->trx          = getTrx();
-        $transaction->save();
+        $transaction->save();   
 
         $order = Order::create([
             'user_id'     => !empty(Auth::user()->id) ? Auth::user()->id : 0,
@@ -86,6 +117,7 @@ class Checkout extends Component
                 'state'      => $this->state,
                 'order_notes'=> $this->order_notes,
                 'company'    => $this->company,
+                'payment_proof_url' => isset($data['payment_proof_url']) ? $data['payment_proof_url'] : null,
             ]) , // Assuming shipping address is not required
             'status'      => 0, // Assuming 0 is for pending status
         ]);
@@ -105,7 +137,7 @@ class Checkout extends Component
             }
         }
          
-      
+       $user       = auth()->user();
         if(isset($user)){
             
         $refer_user = User::find($user->ref_by);
@@ -171,8 +203,8 @@ class Checkout extends Component
                     if ($total_percent > 0 && $total_percent <= 24 ) {
                         $refer_parent_commission = (($product->price * $order->quantity) * $diff_value) / 100;
                         
-                        // Update current user's points
-                        if($currentUser->registerion_type == 'affiliate'){
+                        // Update current user's points registerion_type 
+                        if($currentUser->registration_type == 'affiliate'){
                             $currentUser->bv_points += $refer_parent_commission;
                             $currentUser->gp_points += $refer_parent_commission;
                             $currentUser->balance +=$refer_parent_commission ;
