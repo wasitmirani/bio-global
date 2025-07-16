@@ -64,36 +64,7 @@
                             @endif
                                     </div>
                                 </div>
-                                <div class="product-thumb">
-                                    <div class="thumb-inner">
-                                        <a href="#">
-                                            <img src="{{ getImage(getFilePath('products') . '/' . $product->thumbnail, getFileSize('products')) }}" alt="img">
-                                        </a>
-                                        <div class="thumb-group">
-                                            
-                                          @livewire('add-to-cart', ['product' => $product], key($product->id))
-
-                                           
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="product-info">
-                                    <h5 class="product-name product_title">
-                                        <a href="{{ route('product.details', ['id' => $product->id, 'slug' => slug($product->name)]) }}">
-                                            {{ __(shortDescription($product->name, 35)) }}</a>
-                                    </h5>
-                                    <div class="group-info">
-                                       
-                                        <div class="price">
-                                            {{-- <del>
-                                                $65
-                                            </del> --}}
-                                            <ins>
-                                               {{ showAmount($product->price) }}
-                                            </ins>
-                                        </div>
-                                    </div>
-                                </div>
+                                 @livewire('add-to-cart', ['product' => $product], key($product->id))
                             </div>
                         </li>
                         @endforeach

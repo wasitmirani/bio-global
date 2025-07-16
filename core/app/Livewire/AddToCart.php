@@ -23,6 +23,19 @@ class AddToCart extends Component
         $this->product = $product;
         $this->updateCartCount();
     }
+
+    public function incrementQty()
+        {
+            $this->quantity++;
+        }
+
+        public function decrementQty()
+        {
+            if ($this->quantity > 1) {
+                $this->quantity--;
+            }
+        }
+
     
     public function addToCart()
     {
