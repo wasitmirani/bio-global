@@ -199,9 +199,9 @@
                 var price = curSym + parseFloat(order.price).toFixed(2);
                 var totalPrice = curSym + parseFloat(order.total_price).toFixed(2);
                 var url = (`{{ route('admin.product.edit', ':id') }}`).replace(":id", order.product_id);
-                modal.find('.username').text(order.user.username ? order.user.username : 'Guest');
+                modal.find('.username').text(order?.user?.username ? order?.user?.username : 'Guest');
                 modal.find('.trx').text(order.trx);
-                modal.find('.product').text(order.product.name);
+                modal.find('.product').text(order.product?.name);
                 modal.find('.product').attr('href', url);
                 modal.find('.quantity').text(order.quantity);
                 modal.find('.quantity').text(order.quantity);
@@ -245,35 +245,39 @@
 
                 // Shipping Address
                 if(order.shipping_details){
-                    let addr = order.shipping_details;
+
+                    let addr = JSON.parse(order.shipping_details);
+                    console.log('Parsed Address:', addr);
+                    console.log(addr);
                     addressDiv.html(
                         `<div style="background: #f8f9fa; border-radius: 8px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);">
                             <div style="margin-bottom: 8px;">
-                                <b style="color:#2d3748;">@lang('Name'):</b> <span style="color:#495057;">${addr.first_name ?? ''} ${addr.last_name ?? ''}</span>
+                                <b style="color:#2d3748;">Name:</b> <span style="color:#495057;">${addr.first_name ?? ''} ${addr.last_name ?? ''}</span>
                             </div>
                             <div style="margin-bottom: 8px;">
-                                <b style="color:#2d3748;">@lang('Email'):</b> <span style="color:#495057;">${addr.email ?? ''}</span>
+                                <b style="color:#2d3748;">Email:</b> <span style="color:#495057;">${addr.email ?? ''}</span>
                             </div>
-                            ${addr.company ? `<div style="margin-bottom: 8px;"><b style="color:#2d3748;">@lang('Company'):</b> <span style="color:#495057;">${addr.company}</span></div>` : ''}
+                            ${addr.company ? `<div style="margin-bottom: 8px;"><b style="color:#2d3748;">Company:</b> <span style="color:#495057;">${addr.company}</span></div>` : ''}
                             <div style="margin-bottom: 8px;">
-                                <b style="color:#2d3748;">@lang('Address'):</b> <span style="color:#495057;">${addr.address ?? ''}</span>
-                            </div>
-                            <div style="margin-bottom: 8px;">
-                                <b style="color:#2d3748;">@lang('City'):</b> <span style="color:#495057;">${addr.city ?? ''}</span>
+                                <b style="color:#2d3748;">Address:</b> <span style="color:#495057;">${addr.address ?? ''}</span>
                             </div>
                             <div style="margin-bottom: 8px;">
-                                <b style="color:#2d3748;">@lang('State'):</b> <span style="color:#495057;">${addr.state ?? ''}</span>
+                                <b style="color:#2d3748;">City:</b> <span style="color:#495057;">${addr.city ?? ''}</span>
                             </div>
                             <div style="margin-bottom: 8px;">
-                                <b style="color:#2d3748;">@lang('ZIP'):</b> <span style="color:#495057;">${addr.zip ?? ''}</span>
+                                <b style="color:#2d3748;">State:</b> <span style="color:#495057;">${addr.state ?? ''}</span>
                             </div>
                             <div style="margin-bottom: 8px;">
-                                <b style="color:#2d3748;">@lang('Country'):</b> <span style="color:#495057;">${addr.country ?? ''}</span>
+                                <b style="color:#2d3748;">ZIP:</b> <span style="color:#495057;">${addr.zip ?? ''}</span>
                             </div>
                             <div style="margin-bottom: 8px;">
-                                <b style="color:#2d3748;">@lang('Phone'):</b> <span style="color:#495057;">${addr.phone ?? ''}</span>
+                                <b style="color:#2d3748;">Country:</b> <span style="color:#495057;">${addr.country ?? ''}</span>
                             </div>
-                            ${addr.order_notes ? `<div style="margin-bottom: 8px;"><b style="color:#2d3748;">@lang('Order Notes'):</b> <span style="color:#495057;">${addr.order_notes}</span></div>` : ''}
+                            <div style="margin-bottom: 8px;">
+                                <b style="color:#2d3748;">Phone:</b> <span style="color:#495057;">${addr.phone ?? ''}</span>
+                            </div>
+                            ${addr.order_notes ? `<div style="margin-bottom: 8px;"><b style="color:#2d3748;">Order Notes:</b> <span style="color:#495057;">${addr.order_notes}</span></div>` : ''}
+                            ${addr.payment_proof_url ? `<div style="margin-bottom: 8px;"><b style="color:#2d3748;">Payment Proof:</b> <a href="{{ asset('/core/public') }}/${addr.payment_proof_url.replace(/^.*storage[\\/]/, '')}" target="_blank" style="color:#0d6efd;">View Proof</a></div>` : ''}
                         </div>`
                     );
                 } else {

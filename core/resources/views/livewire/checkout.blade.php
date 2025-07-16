@@ -65,6 +65,17 @@
                                     <textarea wire:model.defer="order_notes" title="order_notes" class="input-text"></textarea>
                                     @error('order_notes') <span class="text-danger">{{ $message }}</span> @enderror
                                 </p>
+                                <p class="form-row form-row-wide">
+                                    <label class="text">Upload Proof of Payment</label>
+                                    <input type="file" wire:model.defer="payment_proof" class="input-text" accept="image/*">
+                                    @error('payment_proof') <span class="text-danger">{{ $message }}</span> @enderror
+
+                                    @if ($payment_proof)
+                                        <div class="mt-2">
+                                        <img src="{{ $payment_proof->temporaryUrl() }}" alt="Proof of Payment" style="max-width: 200px;">
+                                        </div>
+                                    @endif
+                                </p>
                                 <button type="submit" class="button btn-pay-now">Submit Order</button>
                             </form>
                         </div>
