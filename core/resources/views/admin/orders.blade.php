@@ -235,7 +235,7 @@
                                     <br>
                                     <small style="color: #6c757d;">@lang('Qty'): ${item.quantity}</small>
                                 </span>
-                                <span style="font-weight: bold; color: #198754;">{{ gs('cur_sym') }}${parseFloat(item.price).toFixed(2)}</span>
+                                <span style="font-weight: bold; color: #198754;">{{ gs('cur_sym') }}${parseFloat(item.price * item.quantity).toFixed(2)}</span>
                             </li>`
                         );
                     });
