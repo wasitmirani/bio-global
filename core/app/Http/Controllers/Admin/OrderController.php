@@ -29,7 +29,7 @@ class OrderController extends Controller
             'status' => 'required|in:1,2'
         ]);
 
-        $order   = Order::where('status', Status::ORDER_PENDING)->findOrFail($id);
+        $order   = Order::where('status', Status::ORDER_PENDING)->with('orderItems')->findOrFail($id);
         // $product = $order->product;
         $user    = $order->user;
         if(!$user) {
@@ -41,7 +41,11 @@ class OrderController extends Controller
         if ($request->status == Status::ORDER_SHIPPED) {
             $order->status = Status::ORDER_SHIPPED;
             $details       =  ' product purchase';
-       awardBusinessVolume($user->id, $product->bv*$order->quantity, $details);
+            foreach ($order->orderItems as $item) {
+                $product = $item->product;
+                  awardBusinessVolume($user->id, $product->bv*$item->quantity, $details);
+            }
+   
             $template = 'ORDER_SHIPPED';
         } else {
             
