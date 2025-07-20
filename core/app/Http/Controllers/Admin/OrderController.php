@@ -30,7 +30,7 @@ class OrderController extends Controller
         ]);
 
         $order   = Order::where('status', Status::ORDER_PENDING)->findOrFail($id);
-        $product = $order->product;
+        // $product = $order->product;
         $user    = $order->user;
         if(!$user) {
            $order->status = Status::ORDER_SHIPPED;
@@ -40,7 +40,7 @@ class OrderController extends Controller
         }
         if ($request->status == Status::ORDER_SHIPPED) {
             $order->status = Status::ORDER_SHIPPED;
-            $details       = $product->name . ' product purchase';
+            $details       =  ' product purchase';
        awardBusinessVolume($user->id, $product->bv*$order->quantity, $details);
             $template = 'ORDER_SHIPPED';
         } else {
@@ -68,10 +68,10 @@ class OrderController extends Controller
         $order->save();
 
         notify($user, $template, [
-            'product_name' => $product->name,
-            'quantity'     => $request->quantity,
-            'price'        => showAmount($product->price, currencyFormat: false),
-            'total_price'  => showAmount($order->total_price, currencyFormat: false),
+            'product_name' => $product->name ?? 'N/A',
+            'quantity'     => $request->quantity ?? 0,
+            'price'        => showAmount($product->price ?? 0,  false),
+            'total_price'  => showAmount($order->total_price ?? 0,  false),
             'trx'          => $order->trx,
         ]);
 
