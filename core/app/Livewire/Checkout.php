@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\DB;
 
 
 class Checkout extends Component
@@ -33,6 +34,26 @@ class Checkout extends Component
     public $zip='';
     public $payment_proof;
 
+    
+//   if ($this->payment_proof) {
+//     $file = $this->payment_proof;
+//     $fileName = time() . '_' . $file->getClientOriginalName();
+//     $destinationPath = public_path('assets/payment_proofs');
+
+//     // Create directory if not exists
+//     if (!File::exists($destinationPath)) {
+//         File::makeDirectory($destinationPath, 0755, true);
+//     }
+
+//     // Copy the temporary Livewire file manually
+//     File::copy($file->getRealPath(), $destinationPath . '/' . $fileName);
+
+//     // Save relative path in DB
+//     $data['payment_proof_url'] = 'assets/payment_proofs/' . $fileName;
+
+//     // Save to DB (adjust to your model)
+   
+// }
 
     public function render()
     {
@@ -48,7 +69,7 @@ class Checkout extends Component
 
     public function AffiliateOrder($user, $totalPrice, $totalQuantity){
         // Handle affiliate order logic here
-
+        DB::beginTransaction();
         $user->balance -= $totalPrice;
         $user->save();
 
@@ -59,7 +80,7 @@ class Checkout extends Component
         $transaction->post_balance = $user->balance;
         $transaction->charge       = 0;
         $transaction->trx_type     = '-';
-        $transaction->details      = $product->name . ' -item purchase';
+        $transaction->details      = ' -items purchase';
         $transaction->trx          = getTrx();
         $transaction->save();
         
@@ -117,7 +138,7 @@ class Checkout extends Component
 
         $user  = User::find(auth()->user()->id);
         $ancestors = $user->ancestors(); // Collection of all ancestors
-
+  
         $total_percent =0;
         $list_user= [];
         $app_users =[];
@@ -136,7 +157,7 @@ class Checkout extends Component
                     $last_user_percent = determineCommissionRate($previousUser->bv_points + userGroupPoints($previousUser));
                     $parent_user_percent = determineCommissionRate($currentUser->bv_points + userGroupPoints($currentUser));
                     
-                   
+             
                     $diff_value = $parent_user_percent - $last_user_percent;
                      $list_user [] = ['diff_value'=>$diff_value,'parent_user_percent'=>$parent_user_percent
                         ,'last_user_percent'=>$last_user_percent,
@@ -171,8 +192,9 @@ class Checkout extends Component
                 $previousUser = $currentUser;
             
         }
-
-        
+      
+        DB::commit();
+    
     }
     public function submitOrder()
     {
@@ -199,6 +221,9 @@ class Checkout extends Component
                     return;
                 }
                 $this->affiliateOrder($user, $totalPrice, $totalQuantity);
+                    $this->resetForm();
+                   return redirect()->route('thankyou', ['order' => $order->id ?? null]);
+                 
                 return;
                 break;
             case 'customer':
