@@ -299,11 +299,7 @@ class UserController extends Controller
         $order->status      = 0;
         $order->save();
         
-        $user  = User::find(auth()->user()->id);
-        
-        
-
-   
+        $user  = User::find(auth()->user()->id);   
         $refer_user = User::find($user->ref_by);
 
         if (!empty($refer_user)) {
