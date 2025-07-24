@@ -193,6 +193,21 @@ class Checkout extends Component
             
         }
       
+            // Save order items
+        foreach ($this->cartItems as $item) {
+            $order->orderItems()->create([
+                'product_id' => $item['product_id'],
+                'order_id'   => $order->id,
+                'quantity'   => $item['quantity'],
+                'price'      => $item['price'],
+            ]);
+            $product = Product::find($item['product_id']);
+  
+            if ($product) {
+                $product->decrement('quantity', $item['quantity']);
+            }
+        }
+         
         DB::commit();
     
     }
@@ -246,21 +261,7 @@ class Checkout extends Component
         $transaction->save();   
 
 
-        // Save order items
-        foreach ($this->cartItems as $item) {
-            $order->orderItems()->create([
-                'product_id' => $item['product_id'],
-                'order_id'   => $order->id,
-                'quantity'   => $item['quantity'],
-                'price'      => $item['price'],
-            ]);
-            $product = Product::find($item['product_id']);
-  
-            if ($product) {
-                $product->decrement('quantity', $item['quantity']);
-            }
-        }
-         
+    
        $user       = auth()->user();
         if(isset($user)){
             
