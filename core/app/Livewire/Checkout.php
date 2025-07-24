@@ -169,6 +169,154 @@ class Checkout extends Component
                     if ($total_percent > 0 && $total_percent <= 24 ) {
                         $refer_parent_commission = (($totalPrice) * $diff_value) / 100;
                         
+                        
+                        // Update current user's points
+                        $currentUser->gp_points += $refer_parent_commission;
+                        $currentUser->balance +=$refer_parent_commission ;
+                        $currentUser->save();
+                        //Update Transaction Comission
+                        $transaction = new Transaction();
+                        $transaction->amount = $refer_parent_commission;
+                        $transaction->user_id = $currentUser->id;
+                        $transaction->charge = 0;
+                        $transaction->trx_type = '+';
+                        $transaction->details = $diff_value . ' % - Group Bonus';
+                        $transaction->remark = 'group_bonus_amount';
+                        $transaction->trx = getTrx();
+                        $transaction->post_balance = $currentUser->balance;
+                        $transaction->save();
+    
+                        $app_users [] =$currentUser;
+                    }
+                }
+            
+                // Update previous user for next iteration
+                $previousUser = $currentUser;
+            
+        }
+      
+            // Save order items
+        foreach ($this->cartItems as $item) {
+            $order->orderItems()->create([
+                'product_id' => $item['product_id'],
+                'order_id'   => $order->id,
+                'quantity'   => $item['quantity'],
+                'price'      => $item['price'],
+            ]);
+            $product = Product::find($item['product_id']);
+  
+            if ($product) {
+                $product->decrement('quantity', $item['quantity']);
+            }
+        }
+         
+        DB::commit();
+    
+    }
+
+    public function retailOrder($user, $totalPrice, $totalQuantity){
+        // Handle retail order logic here
+        DB::beginTransaction();
+        $user->balance -= $totalPrice;
+        $user->save();
+
+        
+        $transaction               = new Transaction();
+        $transaction->user_id      = $user->id;
+        $transaction->amount       = $totalPrice;
+        $transaction->post_balance = $user->balance;
+        $transaction->charge       = 0;
+        $transaction->trx_type     = '-';
+        $transaction->details      = ' -items purchase';
+        $transaction->trx          = getTrx();
+        $transaction->save();
+        
+        $order = Order::create([
+            'user_id'     => !empty(Auth::user()->id) ? Auth::user()->id : 0,
+            'product_id'  => 0,
+            'quantity'    => $totalQuantity,
+            'price'       => $totalPrice,
+            'total_price' => $totalPrice,
+            'trx'         => $transaction->trx,
+            'order_notes' => $this->order_notes,
+            'order_type'  => !empty(auth()->user()->id) ? 'registered' : 'guest', // Assuming order type is checkout
+            'shipping_details' => json_encode([
+                'first_name' => $this->first_name,
+                'last_name'  => $this->last_name,
+                'email'      => $this->email,
+                'phone'      => $this->phone,
+                'country'    => $this->country,
+                'city'       => $this->city,
+                'state'      => $this->state,
+                'order_notes'=> $this->order_notes,
+                'company'    => $this->company,
+                'payment_proof_url' => isset($data['payment_proof_url']) ? $data['payment_proof_url'] : null,
+            ]) , // Assuming shipping address is not required
+            'status'      => 0, // Assuming 0 is for pending status
+        ]);
+ 
+        $refer_user = User::find($user->ref_by);
+        if (!empty($refer_user)) {
+            // Example values, replace with actual logic as needed
+            $auth_user_percent = determineCommissionRate(auth()->user()->bv_points) + userGroupPoints(auth()->user()); // percent
+            $refer_user_percent = determineCommissionRate($refer_user->bv_points+ userGroupPoints($refer_user)) ; // percent
+            // Calculate the commission amount for the refer user
+        
+            $refer_user_commission = (($totalPrice ) * 25) / 100;
+            // Update the refer user's balance
+            $refer_user->total_ref_com += $refer_user_commission;
+            $refer_user->balance += $refer_user_commission ;
+            $refer_user->save();
+
+
+                  
+            $transaction = new Transaction();
+            $transaction->amount = $refer_user_commission;
+            $transaction->user_id = $refer_user->id;
+            $transaction->charge = 0;
+            $transaction->trx_type = '+';
+            $transaction->details = $refer_user_percent . ' % - Sponsor Bonus';
+            $transaction->remark = 'sponsor_bonus_amount';
+            $transaction->trx = getTrx();
+            $transaction->post_balance = $refer_user->balance;
+            $transaction->save();
+
+
+        }
+
+        $user  = User::find(auth()->user()->id);
+        $ancestors = $user->ancestors(); // Collection of all ancestors
+  
+        $total_percent =0;
+        $list_user= [];
+        $app_users =[];
+        $previousUser = null; // Initialize previous user tracker
+
+        foreach ($ancestors as $currentUser) {
+                // Skip if current user is the referrer
+            if ($refer_user->id == $currentUser->id) {
+                $previousUser = $currentUser;
+                continue;
+            }
+
+            // Only calculate if $previousUser exists (not first iteration)
+                if ($previousUser !== null) {
+                    // Calculate commission rates based on PREVIOUS user
+                    $last_user_percent = determineCommissionRate($previousUser->bv_points + userGroupPoints($previousUser));
+                    $parent_user_percent = determineCommissionRate($currentUser->bv_points + userGroupPoints($currentUser));
+                    
+             
+                    $diff_value = $parent_user_percent - $last_user_percent;
+                     $list_user [] = ['diff_value'=>$diff_value,'parent_user_percent'=>$parent_user_percent
+                        ,'last_user_percent'=>$last_user_percent,
+                        'user_name'=>$currentUser->username
+                     ];
+                      $total_percent += $diff_value;
+                    
+                    if ($total_percent > 0 && $total_percent <= 24 ) {
+                        $refer_parent_commission = (($totalQuantity * 8) * $diff_value) / 100;
+                        
+                        
                         // Update current user's points
                         $currentUser->gp_points += $refer_parent_commission;
                         $currentUser->balance +=$refer_parent_commission ;
@@ -240,13 +388,13 @@ class Checkout extends Component
                     $this->resetForm();
                    return redirect()->route('thankyou', ['order' => $order->id ?? null]);
                  
-                return;
+            return;
                 break;
-            case 'customer':
-                // Handle customer logic if needed
-                break;
+            
             default:
-                session()->flash('error', 'Invalid user type');     
+                    $this->retailOrder($user, $totalPrice, $totalQuantity);
+                        $this->resetForm();
+                   return redirect()->route('thankyou', ['order' => $order->id ?? null]);
             return;
         }
 
