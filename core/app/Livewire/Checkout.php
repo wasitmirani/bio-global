@@ -89,7 +89,7 @@ class Checkout extends Component
             'product_id'  => 0,
             'quantity'    => $totalQuantity,
             'price'       => $totalPrice,
-            'total_price' => $this->total,
+            'total_price' => $totalPrice,
             'trx'         => $transaction->trx,
             'order_notes' => $this->order_notes,
             'order_type'  => !empty(auth()->user()->id) ? 'registered' : 'guest', // Assuming order type is checkout
