@@ -36,7 +36,7 @@
                                         <td>{{ '#' . $order->trx }}</td>
 
                                         <td>{{ showAmount($order->price) }} </td>
-                                        <td>{{ showAmount($order->price * $order->quantity) }}</td>
+                                        <td>{{ showAmount($order->price ) }}</td>
                                         <td>{{ $order->quantity }}</td>
                                         <td>
                                             @php echo $order->statusOrderBadge @endphp
