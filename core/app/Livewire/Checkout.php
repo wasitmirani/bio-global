@@ -114,7 +114,8 @@ class Checkout extends Component
             $auth_user_percent = determineCommissionRate(auth()->user()->bv_points) + userGroupPoints(auth()->user()); // percent
             $refer_user_percent = determineCommissionRate($refer_user->bv_points+ userGroupPoints($refer_user)) ; // percent
             // Calculate the commission amount for the refer user
-            $refer_user_commission = (($totalPrice * $totalQuantity) * $refer_user_percent) / 100;
+        
+            $refer_user_commission = (($totalPrice ) * $refer_user_percent) / 100;
             // Update the refer user's balance
             $refer_user->total_ref_com += $refer_user_commission;
             $refer_user->balance += $refer_user_commission ;
@@ -166,7 +167,7 @@ class Checkout extends Component
                       $total_percent += $diff_value;
                     
                     if ($total_percent > 0 && $total_percent <= 24 ) {
-                        $refer_parent_commission = (($totalPrice * $totalQuantity) * $diff_value) / 100;
+                        $refer_parent_commission = (($totalPrice) * $diff_value) / 100;
                         
                         // Update current user's points
                         $currentUser->gp_points += $refer_parent_commission;
