@@ -258,13 +258,13 @@ class Checkout extends Component
         $refer_user = User::find($user->ref_by);
         if (!empty($refer_user)) {
             // Example values, replace with actual logic as needed
-            $auth_user_percent = determineCommissionRate(auth()->user()->bv_points) + userGroupPoints(auth()->user()); // percent
-            $refer_user_percent = determineCommissionRate($refer_user->bv_points+ userGroupPoints($refer_user)) ; // percent
+      
+            $refer_user_percent = 25 ; // percent
             // Calculate the commission amount for the refer user
         
             $refer_user_commission = (($totalPrice ) * 25) / 100;
             // Update the refer user's balance
-            $refer_user->total_ref_com += $refer_user_commission;
+            $refer_user->team_sale_amount += $refer_user_commission;
             $refer_user->balance += $refer_user_commission ;
             $refer_user->save();
 
@@ -275,8 +275,8 @@ class Checkout extends Component
             $transaction->user_id = $refer_user->id;
             $transaction->charge = 0;
             $transaction->trx_type = '+';
-            $transaction->details = $refer_user_percent . ' % - Sponsor Bonus';
-            $transaction->remark = 'sponsor_bonus_amount';
+            $transaction->details = $refer_user_percent . ' % - Retail Bonus';
+            $transaction->remark = 'retail_bonus_amount';
             $transaction->trx = getTrx();
             $transaction->post_balance = $refer_user->balance;
             $transaction->save();
@@ -318,7 +318,7 @@ class Checkout extends Component
                         
                         
                         // Update current user's points
-                        $currentUser->gp_points += $refer_parent_commission;
+                        $currentUser->bv_points += $refer_parent_commission;
                         $currentUser->balance +=$refer_parent_commission ;
                         $currentUser->save();
                         //Update Transaction Comission
@@ -327,7 +327,7 @@ class Checkout extends Component
                         $transaction->user_id = $currentUser->id;
                         $transaction->charge = 0;
                         $transaction->trx_type = '+';
-                        $transaction->details = $diff_value . ' % - Group Bonus';
+                        $transaction->details = $diff_value . ' % - Retail Group Bonus';
                         $transaction->remark = 'group_bonus_amount';
                         $transaction->trx = getTrx();
                         $transaction->post_balance = $currentUser->balance;

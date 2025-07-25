@@ -126,7 +126,7 @@
                         <div class="dashboard-item-header">
                             <div class="header-left">
                                 <h6 class="title">@lang('Retail Bonus')</h6>
-                                <h3 class="ammount theme-one">0</h3>
+                                <h3 class="ammount theme-one">{{ showAmount(auth()->user()->team_sale_amount) }}</h3>
                             </div>
                             <div class="icon"><i class="flaticon-money-bag"></i></div>
                         </div>
