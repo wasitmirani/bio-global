@@ -284,8 +284,9 @@ class Checkout extends Component
 
         }
 
-        $user  = User::find(auth()->user()->id);
+        $user  = User::find($refer_user->id);
         $ancestors = $user->ancestors(); // Collection of all ancestors
+
   
         $total_percent =0;
         $list_user= [];
