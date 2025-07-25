@@ -3,7 +3,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <div class="notice"></div>
+                <!--<div class="notice"></div>-->
                 @php
                     $kyc = getContent('kyc.content', true);
                 @endphp
@@ -126,7 +126,7 @@
                         <div class="dashboard-item-header">
                             <div class="header-left">
                                 <h6 class="title">@lang('Retail Bonus')</h6>
-                                <h3 class="ammount theme-one">{{ showAmount(auth()->user()->team_sale_amount) }}</h3>
+                                <h3 class="ammount theme-one">0</h3>
                             </div>
                             <div class="icon"><i class="flaticon-money-bag"></i></div>
                         </div>
@@ -152,17 +152,16 @@
                     <div class="dashboard-item">
                         <div class="dashboard-item-header">
                             <div class="header-left">
-                                <h6 class="title">@lang('GPV')</h6>
-                                <h3 class="ammount theme-two">{{ userGroupPoints(auth()->user()) }}</h3>
+                                <h6 class="title">@lang('Group Bonus')</h6>
+                                <h3 class="ammount theme-one">{{ showAmount(auth()->user()->gp_points) }}</h3>
                             </div>
-                            <div class="right-content">
-                                <div class="icon"><i class="flaticon-wallet"></i></div>
-                            </div>
+                            <div class="icon"><i class="flaticon-money-bag"></i></div>
                         </div>
                         <div class="dashboard-item-body">
                         </div>
                     </div>
                 </div>
+                
                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
                     <div class="dashboard-item">
                         <div class="dashboard-item-header">
@@ -243,7 +242,7 @@
                                 </h6>
                                 <h3 class="ammount">
                                     @if (auth()->user()->bv_points)
-                                        <span>Affiliate: {{ determineCommissionRate(auth()->user()->bv_points+userGroupPoints(auth()->user())) }}%</span>
+                                        <span> {{ determineCommissionRate(auth()->user()->bv_points+userGroupPoints(auth()->user())) }}%</span>
                                     @else
                                         <span class="text--danger">@lang('Not Member')</span>
                                     @endif
@@ -262,7 +261,24 @@
                         <div class="dashboard-item-header">
                             <div class="header-left">
                                 <h6 class="title">@lang('Rank')</h6>
-                                <h3 class="ammount theme-one">{{ showUserRewards(auth()->user())['name'] }}</h3>
+                                <!--<h3 class="ammount theme-one">{{ showUserRewards(auth()->user())['name'] }}</h3>-->
+                                <h3 class="ammount theme-one">
+ @php
+    // Store the result of the function call in a variable to avoid repeated calls
+    $commissionRate = determineCommissionRate(auth()->user()->bv_points + userGroupPoints(auth()->user()));
+@endphp
+
+@if ($commissionRate >= 15)
+    {{-- This condition checks if the value is 15 or greater. --}}
+    <span> @lang('Manager') </span>
+@elseif ($commissionRate > 1 && $commissionRate < 15)
+    {{-- This condition checks if the value is greater than 1 AND less than 15. --}}
+    <span> @lang('Affiliate') </span>
+@else
+    {{-- This will catch any other cases, such as the rate being 1 or less. --}}
+    <span class="text--danger">@lang('Not Member')</span>
+@endif
+</h3>
                             </div>
                             <div class="icon"><i class="flaticon-tag-1"></i></div>
                         </div>
@@ -284,25 +300,62 @@
                     </div>
                 </div> --}}
                 
-                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
+               <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
                     <div class="dashboard-item">
                         <div class="dashboard-item-header">
                             <div class="header-left">
-                                <h6 class="title">@lang('Group Bonus')</h6>
-                                <h3 class="ammount theme-one">{{ showAmount(auth()->user()->gp_points) }}</h3>
+                                <h6 class="title">@lang('GPV')</h6>
+                                <h3 class="ammount theme-two">{{ userGroupPoints(auth()->user()) }}</h3>
                             </div>
-                            <div class="icon"><i class="flaticon-money-bag"></i></div>
+                            <div class="right-content">
+                                <div class="icon"><i class="flaticon-wallet"></i></div>
+                            </div>
                         </div>
                         <div class="dashboard-item-body">
                         </div>
                     </div>
                 </div>
-                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
+                
+               <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
                     <div class="dashboard-item">
                         <div class="dashboard-item-header">
                             <div class="header-left">
                                 <h6 class="title">@lang('MPV')</h6>
                                 <h3 class="ammount theme-one">{{ showUserRewards(auth()->user())['car_reward'] }}</h3>
+                            </div>
+                            <div class="right-content">
+                                <div class="icon"><i class="flaticon-wallet"></i></div>
+                            </div>
+                        </div>
+                        <div class="dashboard-item-body">
+                        </div>
+                    </div>
+                </div>
+                                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
+                    <div class="dashboard-item">
+                        <div class="dashboard-item-header">
+                            <div class="header-left">
+                                <h6 class="title">@lang('Total Withdraw')</h6>
+                                <h3 class="ammount theme-one">{{ showAmount($totalWithdraw) }}</h3>
+                            </div>
+                            <div class="icon"><i class="flaticon-withdraw"></i></div>
+                        </div>
+                        <div class="dashboard-item-body">
+                        </div>
+                    </div>
+                </div>
+                                                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
+                    <div class="dashboard-item">
+                        <div class="dashboard-item-header">
+                            <div class="header-left">
+                               <h6 class="title">@lang('Total Bonus')</h6>
+                                <h3 class="ammount theme-one">{{ 
+                                
+                                
+                                
+                                showAmount(auth()->user()->total_ref_com+ auth()->user()->gp_points)
+                                
+                                }}</h3>
                             </div>
                             <div class="icon"><i class="flaticon-money-bag"></i></div>
                         </div>
@@ -324,19 +377,7 @@
                     </div>
                 </div>-->
                 
-                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
-                    <div class="dashboard-item">
-                        <div class="dashboard-item-header">
-                            <div class="header-left">
-                                <h6 class="title">@lang('Total Withdraw')</h6>
-                                <h3 class="ammount theme-one">{{ showAmount($totalWithdraw) }}</h3>
-                            </div>
-                            <div class="icon"><i class="flaticon-withdraw"></i></div>
-                        </div>
-                        <div class="dashboard-item-body">
-                        </div>
-                    </div>
-                </div>
+
                 <!--<div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
                     <div class="dashboard-item">
                         <div class="dashboard-item-header">
@@ -349,27 +390,8 @@
                         <div class="dashboard-item-body">
                         </div>
                     </div>
-                </div> <!--showAmount(auth()->user()->team_sale_amount) -->
-                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
-                    <div class="dashboard-item">
-                        <div class="dashboard-item-header">
-                            <div class="header-left">
-                                <h6 class="title">@lang('Total Bonus')</h6>
-                                <h3 class="ammount theme-one">{{ 
-                                
-                                
-                                
-                                showAmount(auth()->user()->total_ref_com+ auth()->user()->gp_points)
-                                
-                                }}</h3>
-                            </div>
-                            <div class="icon"><i class="flaticon-money-bag"></i></div>
-                        </div>
-                        <div class="dashboard-item-body">
-                        </div>
-                    </div>
-                </div>
-            
+                </div> <!--showAmount(auth()->user()->team_sale_amount) -->-->
+
                <!-- <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
                     <div class="dashboard-item">
                         <div class="dashboard-item-header">
