@@ -390,7 +390,7 @@
                         <div class="dashboard-item-body">
                         </div>
                     </div>
-                </div> <!--showAmount(auth()->user()->team_sale_amount) -->-->
+                </div> <!--showAmount(auth()->user()->team_sale_amount) -->
 
                <!-- <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
                     <div class="dashboard-item">
