@@ -284,10 +284,9 @@ class Checkout extends Component
 
         }
 
-        $user  = User::find($refer_user->id);
-        $ancestors = $user->ancestors(); // Collection of all ancestors
-
-  
+        $user  = User::find(auth()->user()->id);
+         // Get all ancestors of the user
+        $ancestors = $user->ancestors(); // Collection of all ancestor
         $total_percent =0;
         $list_user= [];
         $app_users =[];
