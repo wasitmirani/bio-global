@@ -322,7 +322,7 @@ class Checkout extends Component
                         
                         
                         // Update current user's points
-                        $currentUser->bv_points += $refer_parent_commission;
+                        $currentUser->gp_points += $refer_parent_commission;
                         $currentUser->balance +=$refer_parent_commission ;
                         $currentUser->save();
                         //Update Transaction Comission
