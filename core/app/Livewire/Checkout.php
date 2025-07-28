@@ -256,10 +256,12 @@ class Checkout extends Component
         ]);
  
         $refer_user = User::find($user->ref_by);
-        if (!empty($refer_user)) {
+         $refer_user_percent = determineCommissionRate($refer_user->bv_points + userGroupPoints($refer_user));
+
+        if (!empty($refer_user) && $refer_user_percent >= 6) {
             // Example values, replace with actual logic as needed
-      
-            $refer_user_percent = 25 ; // percent
+
+            $refer_user_percent = 25; // percent
             // Calculate the commission amount for the refer user
         
             $refer_user_commission = (($totalPrice ) * 25) / 100;
@@ -285,6 +287,7 @@ class Checkout extends Component
         }
 
         $user  = User::find(auth()->user()->id);
+        
          // Get all ancestors of the user
         $ancestors = $user->ancestors(); // Collection of all ancestor
  
