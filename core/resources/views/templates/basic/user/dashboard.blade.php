@@ -351,10 +351,10 @@
                                <h6 class="title">@lang('Total Bonus')</h6>
                                 <h3 class="ammount theme-one">{{ 
                                 
-                                
-                                
-                                showAmount(auth()->user()->total_ref_com+ auth()->user()->gp_points)
-                                
+
+
+                                showAmount(auth()->user()->total_ref_com+ auth()->user()->gp_points + auth()->user()->team_sale_amount)
+
                                 }}</h3>
                             </div>
                             <div class="icon"><i class="flaticon-money-bag"></i></div>
