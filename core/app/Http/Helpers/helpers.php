@@ -1062,14 +1062,14 @@ function showUserRewards($user, $number = false)
 
 function userGroupPoints($user)
 {
-    $usersIds = fetchAllChildrenUserIds($user->id);
+    $usersIds = fetchAllChildrenUserIds($user->id); 
     $totalPoints = 0;
     foreach ($usersIds as $userId) {
         $user = User::find($userId);
         $totalPoints += $user->bv_points;
     }
     
-    return $totalPoints;
+    return $totalPoints + auth()->user()->retail_gvp ?? 0; // Include the user's own BV points
 }
 
 function users_sum_numb($column = 'bv_points'){

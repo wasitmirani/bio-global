@@ -322,8 +322,8 @@ class Checkout extends Component
                         
                         
                         // Update current user's points
-                        $currentUser->gp_points += $refer_parent_commission;
-                        $currentUser->balance +=$refer_parent_commission ;
+                        $currentUser->retail_gvp += $refer_parent_commission;
+                        // $currentUser->balance +=$refer_parent_commission ;
                         $currentUser->save();
                         //Update Transaction Comission
                         $transaction = new Transaction();
@@ -331,7 +331,7 @@ class Checkout extends Component
                         $transaction->user_id = $currentUser->id;
                         $transaction->charge = 0;
                         $transaction->trx_type = '+';
-                        $transaction->details = $diff_value . ' % - Retail Group Bonus';
+                        $transaction->details = $diff_value . ' % - Retail Group Points';
                         $transaction->remark = 'group_bonus_amount';
                         $transaction->trx = getTrx();
                         $transaction->post_balance = $currentUser->balance;
