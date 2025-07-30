@@ -313,7 +313,7 @@
                         </div>
                         <div class="dashboard-item-body">
                         </div>
-                    </div>
+                </div>
                 </div>
                 
                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
@@ -344,7 +344,7 @@
                         </div>
                     </div>
                 </div>
-                                                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
+                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4">
                     <div class="dashboard-item">
                         <div class="dashboard-item-header">
                             <div class="header-left">

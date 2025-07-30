@@ -23,6 +23,9 @@ class UserController extends Controller
 {
     public function home()
     {
+        if(!auth()->user()->isAffiliate()){
+            return redirect()->route('user.orders');
+        }
         $pageTitle        = 'Dashboard';
         $totalDeposit     = Deposit::where('user_id', auth()->id())->where('status', 1)->sum('amount');
         $totalWithdraw    = Withdrawal::where('user_id', auth()->id())->where('status', 1)->sum('amount');
@@ -509,7 +512,7 @@ class UserController extends Controller
     public function orders()
     {
         $pageTitle = 'Orders';
-        $orders    = Order::where('user_id', auth()->user()->id)->with('product')->orderBy('id', 'desc')->paginate(getPaginate());
+        $orders    = Order::where('user_id', auth()->user()->id)->with('product','orderItems')->orderBy('id', 'desc')->paginate(getPaginate());
         return view('Template::user.orders', compact('pageTitle', 'orders'));
     }
 }

@@ -12,8 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('registration_type', ['affiliate', 'retail'])->default('affiliate');
-        
+         
+            if(!Schema::hasColumn('users', 'retail_gvp')) {
+                $table->double('retail_gvp', 15, 2)->default(0);
+            }
+
         });
     }
 

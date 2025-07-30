@@ -5,6 +5,13 @@
             <div class="shipping-address-form-wrapp">
                 <div class="shipping-address-form  checkout-form">
                     <div class="row-col-1 row-col">
+                        @if($this->loading)
+                            <div class="loading-spinner">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
+                        @endif
                         <div class="shipping-address">
                             <h3 class="title-form">
                                 Shipping Address
@@ -67,7 +74,9 @@
                                 </p>
                                 <p class="form-row form-row-wide">
                                     <label class="text">Upload Proof of Payment</label>
-                                    <input type="file" wire:model.defer="payment_proof" class="input-text" accept="image/*">
+                                    <input type="file"
+                                     @if(auth()->check() && auth()->user()->isAffiliate()) @else required @endif
+                                     wire:model.defer="payment_proof" class="input-text" accept="image/*">
                                     @error('payment_proof') <span class="text-danger">{{ $message }}</span> @enderror
 
                                     @if ($payment_proof)

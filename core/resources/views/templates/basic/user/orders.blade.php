@@ -6,7 +6,7 @@
                 <table class="custom--table table">
                     <thead>
                         <tr>
-                            <th>@lang('Product')</th>
+                            <th>@lang('Items')</th>
                             <th>@lang('Quantity')</th>
                             <th>@lang('Price')</th>
                             <th>@lang('Total Price')</th>
@@ -17,10 +17,11 @@
                         @forelse($orders as $order)
                             <tr>
                                 <td>
-                                    @if (@$order->product)
-                                        <a href="{{ route('product.details', ['id' => @$order->product->id, 'slug' => slug($order->product->name)]) }}">
-                                            {{ __(strLimit($order->product->name, '30')) }}</a>
-                                    @endif
+                                    @foreach($order->orderItems as $item)
+                                        <div>
+                                            <strong>{{ $item->product->name }}</strong> ({{ $item->quantity }})
+                                        </div>
+                                    @endforeach
                                 </td>
                                 <td>{{ $order->quantity }}</td>
                                 <td>{{ showAmount($order->price) }}</td>

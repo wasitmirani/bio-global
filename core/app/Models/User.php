@@ -205,5 +205,11 @@ class User extends Authenticatable
 
         return $ancestors;
     }
+
+
+    public function isAffiliate()
+    {
+        return $this->registration_type === 'affiliate';
+    }
    
  }

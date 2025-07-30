@@ -16,21 +16,25 @@
                         </div>
                     </div>
                     <ul class="user-dashboard-tab">
+                                                @if (auth()->user()->isAffiliate())
                         <li>
                             <a class="{{menuActive('user.home')}}" href="{{route('user.home')}}">@lang('Dasboard')</a>
                         </li>
+                        
                        <!-- <li>
                             <a class="{{menuActive('user.plan.index')}}" href="{{route('user.plan.index')}}"> @lang('Plan') </a>
                         </li>-->
                         <!--<li>
                             <a class="{{menuActive('user.bv.log')}}" href="{{ route('user.bv.log') }}">@lang('PV Log') </a>
                         </li>-->
+       
                         <li>
                             <a class="{{menuActive('user.my.ref')}}" href="{{ route('user.my.ref') }}"> @lang('My Referrals')</a>
                         </li>
                         <li>
                             <a class="{{menuActive('user.my.tree')}}" href="{{ route('user.my.tree') }}">@lang('My Tree')</a>
                         </li>
+                        @endif
                         {{-- <li>
                             <a href="{{ route('user.binary.summery') }}" class="{{menuActive('user.binary.summery')}}">
                                 @lang('Binary Summery')
@@ -41,16 +45,19 @@
                                 @lang('Orders')
                             </a>
                         </li>
+                               @if (auth()->user()->isAffiliate())
                         <li>
                             <a href="{{ route('user.balance.transfer') }}" class="{{menuActive('user.balance.transfer')}}">
                                 @lang('Balance Transfer')
                             </a>
                         </li>
+                        @endif
                         <li>
                             <a href="{{ route('user.deposit.history') }}" class="{{menuActive(['user.deposit*'])}}">
                                 @lang('Deposit History')
                             </a>
                         </li>
+                               @if (auth()->user()->isAffiliate())
                         <li>
                             <a href="{{ route('user.withdraw.history') }}" class="{{menuActive('user.withdraw*')}}">
                                 @lang('Withdraw History')
@@ -62,6 +69,7 @@
                                 @lang('Transactions History')
                             </a>
                         </li>
+                        @endif
                         <li>
                             <a href="{{ route('ticket.index') }}" class="{{menuActive('ticket*')}}">
                                 @lang('Support Ticket')

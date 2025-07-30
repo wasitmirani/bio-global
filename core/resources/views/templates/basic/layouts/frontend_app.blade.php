@@ -58,13 +58,14 @@
         Livewire.on('cartUpdated', (event) => {
 
             console.log('Cart was updated with items:', event[0].name);
+            let status = event[0].status || 'success';
             // You can update UI here
             // showToast('success', 'Cart updated successfully! ' + event[0].name);
         const txt = event[0].message || 'Product added to cart! |  ' + event[0].name;
              const options = {
              text: txt,
             showHideTransition: 'slide',
-            icon: 'success',
+            icon: status == 'error' ? 'error' : 'success',
             position: 'top-right',
             hideAfter: 3000,
             stack: 1,

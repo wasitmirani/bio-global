@@ -74,10 +74,10 @@
                                             <option value="" selected hidden>@lang('Select User Type')</option>
                                        
                                                 <option value="affiliate"  >
-                                                    Affiliate
+                                                    Member
                                                 </option>
                                                 <option value="retail" >
-                                                    Retail
+                                                    Customer
                                                 </option>
                                            
                                         </select>
