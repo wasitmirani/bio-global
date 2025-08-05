@@ -170,7 +170,7 @@
             </a>
         </div>
         <div class="footer-device-mobile-item device-home device-cart">
-            <a href="{{ route('cart') }}">
+            <a href="{{ route('checkout.index') }}">
 					<span class="icon">
 						<i class="fa fa-shopping-basket" aria-hidden="true"></i>
 						<span class="count-icon">
