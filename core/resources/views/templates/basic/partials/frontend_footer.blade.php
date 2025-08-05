@@ -154,7 +154,7 @@
 <div class="footer-device-mobile">
     <div class="wapper">
         <div class="footer-device-mobile-item device-home">
-            <a href="index.html">
+            <a href="{{ route('home') }}">
 					<span class="icon">
 						<i class="fa fa-home" aria-hidden="true"></i>
 					</span>
@@ -162,15 +162,15 @@
             </a>
         </div>
         <div class="footer-device-mobile-item device-home device-wishlist">
-            <a href="#">
+            <a href="{{ route('products.listing') }}">
 					<span class="icon">
-						<i class="fa fa-heart" aria-hidden="true"></i>
+						<i class="fa fa-th-list" aria-hidden="true"></i>
 					</span>
-                Wishlist
+                Products
             </a>
         </div>
         <div class="footer-device-mobile-item device-home device-cart">
-            <a href="#">
+            <a href="{{ route('cart') }}">
 					<span class="icon">
 						<i class="fa fa-shopping-basket" aria-hidden="true"></i>
 						<span class="count-icon">
@@ -181,12 +181,21 @@
             </a>
         </div>
         <div class="footer-device-mobile-item device-home device-user">
-            <a href="https://biorglobal.com/user/login">
+        @if (auth()->check())
+            <a href="{{ route('user.dashboard') }}">
+                    <span class="icon">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                    </span>
+                dashboard
+            </a>
+        @else
+            <a href="{{ route('user.login') }}">
 					<span class="icon">
 						<i class="fa fa-user" aria-hidden="true"></i>
 					</span>
                 Account
             </a>
+        @endif
         </div>
     </div>
 </div>
